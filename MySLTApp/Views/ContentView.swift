@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = DashboardViewModel()
     @State private var selectedTab = "Broadband"
     
@@ -24,6 +25,19 @@ struct ContentView: View {
                     .buttonStyle(.plain)
                 }
                 Spacer()
+                
+                Button(action: {
+                    authViewModel.logout()
+                }) {
+                    Text("Log Out")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(Color.red.opacity(0.8))
+                        .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
             }
             .padding()
             .background(Color.black)
