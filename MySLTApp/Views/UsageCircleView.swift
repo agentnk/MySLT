@@ -5,28 +5,27 @@ struct UsageCircleView: View {
     
     var body: some View {
         ZStack {
-            // Background Circle
+            // Background ring
             Circle()
-                .stroke(lineWidth: 15)
-                .opacity(0.1)
-                .foregroundColor(.white)
+                .stroke(Color.sltMedBlue, lineWidth: 14)
             
-            // Progress Circle (mocked progress for unlimited)
+            // Progress ring
             Circle()
-                .trim(from: 0.0, to: 0.3) // Representing some usage
-                .stroke(style: StrokeStyle(lineWidth: 15, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.white)
-                .rotationEffect(Angle(degrees: 270.0))
+                .trim(from: 0.0, to: CGFloat(min(usedGB / 100.0, 1.0)))
+                .stroke(
+                    style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                )
+                .foregroundColor(Color(red: 0.55, green: 0.45, blue: 0.90))
+                .rotationEffect(.degrees(-90))
             
-            // Text in the middle
-            VStack(spacing: 8) {
+            // Center text
+            VStack(spacing: 6) {
                 Text("\(String(format: "%.1f", usedGB))GB")
-                    .font(.system(size: 48, weight: .bold))
-                    .foregroundColor(.white)
-                
+                    .font(.system(size: 42, weight: .bold))
+                    .foregroundColor(Color(red: 0.55, green: 0.45, blue: 0.90))
                 Text("used")
-                    .font(.title3)
-                    .foregroundColor(.gray)
+                    .font(.system(size: 14))
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
     }

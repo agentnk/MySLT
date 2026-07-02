@@ -10,53 +10,62 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top Navigation Bar
-            HStack(spacing: 20) {
+            HStack(spacing: 12) {
                 ForEach(tabs, id: \.self) { tab in
-                    Button(action: {
-                        selectedTab = tab
-                    }) {
-                        Text(tab)
-                            .font(.headline)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 24)
-                            .background(selectedTab == tab ? Color.white.opacity(0.15) : Color.clear)
-                            .cornerRadius(8)
+                    Button(action: { selectedTab = tab }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: iconName(for: tab))
+                                .font(.system(size: 14))
+                            Text(tab)
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 18)
+                        .background(selectedTab == tab ? Color.sltBrightBlue : Color.sltMedBlue)
+                        .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
+                    .foregroundColor(.white)
                 }
                 Spacer()
-                
-                Button(action: {
-                    authViewModel.logout()
-                }) {
+                Button(action: { authViewModel.logout() }) {
                     Text("Log Out")
-                        .font(.headline)
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 14)
                         .background(Color.red.opacity(0.8))
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
             }
-            .padding()
-            .background(Color.black)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.sltNavyBg)
             
-            Divider().background(Color.gray.opacity(0.3))
-            
-            // Sub-navigation & Main Content
+            // Main Content
             HStack(spacing: 0) {
-                // Main Dashboard Area
                 DashboardView(viewModel: viewModel)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-                Divider().background(Color.gray.opacity(0.3))
+                Divider()
+                    .background(Color.sltMedBlue)
                 
-                // Right Panel (Billing & Services)
                 RightPanelView(viewModel: viewModel)
                     .frame(width: 320)
             }
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.sltNavyBg)
+    }
+    
+    func iconName(for tab: String) -> String {
+        switch tab {
+        case "Broadband": return "wifi"
+        case "PEOTV":     return "tv"
+        case "Voice":     return "phone"
+        case "Mobile":    return "iphone"
+        case "Promotion": return "megaphone"
+        default:          return "circle"
+        }
     }
 }

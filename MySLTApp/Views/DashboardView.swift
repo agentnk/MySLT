@@ -2,136 +2,165 @@ import SwiftUI
 
 struct DashboardView: View {
     @ObservedObject var viewModel: DashboardViewModel
+    @State private var selectedSubTab = "Summary"
+    let subTabs = ["Summary", "Daily Usage", "Gift Data", "History", "Redeem Data", "Happy Day", "More"]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
             
-            // Sub Tabs
-            HStack(spacing: 16) {
-                let subTabs = ["Summary", "Daily Usage", "Gift Data", "History", "Redeem Data", "Happy Day", "More"]
+            // Sub-Tab Bar
+            HStack(spacing: 0) {
                 ForEach(subTabs, id: \.self) { tab in
-                    Text(tab)
-                        .font(.subheadline)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(tab == "Summary" ? Color.white : Color.clear)
-                        .foregroundColor(tab == "Summary" ? .black : .white)
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.white.opacity(0.3), lineWidth: tab != "Summary" ? 1 : 0)
-                        )
+                    Button(action: { selectedSubTab = tab }) {
+                        Text(tab)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(.vertical, 9)
+                            .padding(.horizontal, 14)
+                            .background(selectedSubTab == tab ? Color.sltBrightBlue : Color.clear)
+                            .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
                 }
+                Spacer()
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
+            .background(Color.sltSubTabBg)
             
             // Package Info & Action Buttons
             HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text("Package : \(viewModel.packageData.name)")
+                        .font(.system(size: 12, weight: .semibold))
                     Text("Status : \(viewModel.packageData.status)")
+                        .font(.system(size: 12))
                     Text("Username : \(viewModel.packageData.username)")
+                        .font(.system(size: 12))
                 }
-                .font(.subheadline)
-                .padding()
-                .background(Color.white.opacity(0.05))
-                .cornerRadius(12)
+                .foregroundColor(.white)
                 
                 Spacer()
                 
-                HStack(spacing: 12) {
-                    ActionButton(title: "Package Upgrade")
-                    ActionButton(title: "Get Extra GB")
-                    ActionButton(title: "Get data Add-ons")
+                HStack(spacing: 10) {
+                    SLTActionButton(title: "Package Upgrade")
+                    SLTActionButton(title: "Get Extra GB")
+                    SLTActionButton(title: "Get data Add-ons")
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.sltNavyBg)
             
-            // Usage Details and Circle
-            HStack(spacing: 24) {
-                // Left Usage List
-                VStack(spacing: 12) {
-                    UsageCard(title: "My Package", value: "\(viewModel.packageData.usedGB) used from GB", isSelected: true)
-                    UsageCard(title: "Extra GB", value: "\(viewModel.packageData.extraGBUsed) used from \(viewModel.packageData.extraGBTotal)GB")
-                    UsageCard(title: "Bonus Data", value: "\(viewModel.packageData.bonusDataUsed) used from \(viewModel.packageData.bonusDataTotal)GB")
-                    UsageCard(title: "Add-Ons Data", value: "N/A")
-                    UsageCard(title: "Free Data", value: "N/A")
-                }
-                .frame(width: 200)
+            // Main Content Area
+            HStack(alignment: .top, spacing: 0) {
                 
-                // Center Circle
+                // Left Usage Cards
+                VStack(spacing: 8) {
+                    SLTUsageCard(title: "My Package", subtitle: "\(viewModel.packageData.usedGB) used from GB", isSelected: true)
+                    SLTUsageCard(title: "Extra GB", subtitle: "\(viewModel.packageData.extraGBUsed) used from \(viewModel.packageData.extraGBTotal)GB")
+                    SLTUsageCard(title: "Bonus Data", subtitle: "\(viewModel.packageData.bonusDataUsed) used from \(viewModel.packageData.bonusDataTotal)GB")
+                    SLTUsageCard(title: "Add-Ons Data", subtitle: "N/A")
+                    SLTUsageCard(title: "Free Data", subtitle: "N/A")
+                    Spacer()
+                }
+                .frame(width: 160)
+                .padding(12)
+                .background(Color.sltNavyBg)
+                
+                // Center Panel
                 VStack(spacing: 16) {
-                    HStack {
+                    Spacer()
+                    
+                    HStack(spacing: 6) {
                         Text("Your speed is")
+                            .font(.system(size: 15))
+                            .foregroundColor(.white)
                         Text(viewModel.packageData.speed)
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
-                            .background(Color.white)
-                            .foregroundColor(.black)
+                            .background(Color.sltBrightBlue)
                             .cornerRadius(12)
                         Text("right now")
+                            .font(.system(size: 15))
+                            .foregroundColor(.white)
                     }
-                    .font(.title3)
                     
                     Text("Total Usage")
-                        .foregroundColor(.gray)
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.6))
                     
-                    UsageCircleView(usedGB: viewModel.packageData.usedGB)
-                        .frame(width: 200, height: 200)
+                    // Big GB display
+                    VStack(spacing: 4) {
+                        Text("\(String(format: "%.1f", viewModel.packageData.usedGB))GB")
+                            .font(.system(size: 56, weight: .bold))
+                            .foregroundColor(Color(red: 0.55, green: 0.45, blue: 0.90))
+                        Text("used")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                    
+                    Spacer()
                     
                     VStack(spacing: 4) {
                         Text("\(String(format: "%.1f", viewModel.packageData.usedGB)) GB USED OF UNLIMITED")
-                            .font(.headline)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white)
                         Text("(Valid Till : \(viewModel.packageData.validTill))")
-                            .foregroundColor(.gray)
-                            .font(.footnote)
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.sltBrightBlue)
                     }
+                    
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.sltDarkCard)
+                .padding(12)
             }
-            
-            Spacer()
+            .frame(maxHeight: .infinity)
         }
-        .padding(24)
+        .background(Color.sltNavyBg)
     }
 }
 
-// Reusable Components
+// MARK: - Reusable Components
 
-struct ActionButton: View {
+struct SLTActionButton: View {
     var title: String
     var body: some View {
         Button(action: {}) {
             Text(title)
-                .fontWeight(.medium)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 20)
-                .background(Color.white.opacity(0.1))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .background(Color.sltLightBlue)
                 .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                )
         }
         .buttonStyle(.plain)
     }
 }
 
-struct UsageCard: View {
+struct SLTUsageCard: View {
     var title: String
-    var value: String
+    var subtitle: String
     var isSelected: Bool = false
     
     var body: some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(spacing: 3) {
             Text(title)
-                .font(.headline)
-                .foregroundColor(isSelected ? .black : .white)
-            Text(value)
-                .font(.caption)
-                .foregroundColor(isSelected ? .black.opacity(0.7) : .gray)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(isSelected ? .white : .white.opacity(0.85))
+            Text(subtitle)
+                .font(.system(size: 10))
+                .foregroundColor(isSelected ? .white.opacity(0.85) : .white.opacity(0.55))
+                .multilineTextAlignment(.center)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.white : Color.white.opacity(0.05))
-        .cornerRadius(12)
+        .background(isSelected ? Color.sltBrightBlue : Color.sltDarkCard)
+        .cornerRadius(8)
     }
 }

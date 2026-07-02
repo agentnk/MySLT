@@ -4,136 +4,144 @@ struct RightPanelView: View {
     @ObservedObject var viewModel: DashboardViewModel
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 16) {
             
-            // Top Grid Buttons
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                RightPanelButton(icon: "plus.square", title: "New Services")
-                RightPanelButton(icon: "wifi", title: "Digital Life")
-                RightPanelButton(icon: "desktopcomputer", title: "Hot Device")
-                RightPanelButton(icon: "doc.text", title: "Bill")
-                RightPanelButton(icon: "exclamationmark.bubble", title: "Complaints")
-                RightPanelButton(icon: "ellipsis", title: "More")
+            // Top Grid Buttons (3x2)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                SLTGridButton(icon: "plus.square.fill",      title: "New Services")
+                SLTGridButton(icon: "wifi",                  title: "Digital Life")
+                SLTGridButton(icon: "desktopcomputer",       title: "Hot Device")
+                SLTGridButton(icon: "doc.text.fill",         title: "Bill")
+                SLTGridButton(icon: "exclamationmark.bubble.fill", title: "Complaints")
+                SLTGridButton(icon: "ellipsis",              title: "More")
             }
             
-            // Mock Ad Banner
+            // Ad Banner Placeholder
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.1))
-                Text("Ad Banner Placeholder")
-                    .foregroundColor(.gray)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.sltDarkCard)
+                VStack(spacing: 6) {
+                    Image(systemName: "play.rectangle.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(Color.sltBrightBlue.opacity(0.7))
+                    Text("Promotions & Offers")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.5))
+                }
             }
-            .frame(height: 120)
+            .frame(height: 100)
             
             // Billing Section
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(spacing: 10) {
                 HStack {
                     Text("Total Payable :")
-                        .font(.headline)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
                     Spacer()
                     Text("Rs \(String(format: "%.2f", viewModel.packageData.payableAmount))")
-                        .font(.headline)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.white)
-                        .foregroundColor(.black)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.sltGreen)
                         .cornerRadius(6)
                 }
                 
-                HStack(spacing: 12) {
+                HStack(spacing: 8) {
                     Button(action: {}) {
                         Text("Pay Now")
-                            .fontWeight(.medium)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.white)
-                            .foregroundColor(.black)
-                            .cornerRadius(8)
+                            .padding(.vertical, 10)
+                            .background(Color.sltGreen)
+                            .cornerRadius(7)
                     }
                     .buttonStyle(.plain)
                     
                     Button(action: {}) {
                         Text("Bill History")
-                            .fontWeight(.medium)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                            )
+                            .padding(.vertical, 10)
+                            .background(Color.sltGreen.opacity(0.6))
+                            .cornerRadius(7)
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding()
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(12)
+            .padding(12)
+            .background(Color.sltDarkCard)
+            .cornerRadius(10)
             
             // Value Added Services
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("Value Added Services")
-                    .font(.headline)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
                 
-                HStack(spacing: 16) {
-                    ServiceIcon(name: "Duthaya")
-                    ServiceIcon(name: "Kaspersky")
-                    ServiceIcon(name: "PEO MOBILE")
-                    ServiceIcon(name: "SLT Kimaki")
-                    ServiceIcon(name: "Storage")
+                HStack(spacing: 12) {
+                    SLTServiceIcon(initial: "D", name: "Duthaya")
+                    SLTServiceIcon(initial: "K", name: "Kaspersky")
+                    SLTServiceIcon(initial: "P", name: "PEO\nMOBILE")
+                    SLTServiceIcon(initial: "S", name: "SLT\nKimaki")
+                    SLTServiceIcon(initial: "C", name: "Storage")
                 }
             }
             
             Spacer()
         }
-        .padding(24)
-        .background(Color.black.opacity(0.2)) // Slightly darker for the sidebar
+        .padding(16)
+        .background(Color.sltNavyBg)
     }
 }
 
-struct RightPanelButton: View {
+// MARK: - Right Panel Components
+
+struct SLTGridButton: View {
     var icon: String
     var title: String
     
     var body: some View {
         Button(action: {}) {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(.title3)
+                    .foregroundColor(Color.sltBrightBlue)
                 Text(title)
-                    .font(.caption)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(Color.white.opacity(0.05))
+            .padding(.vertical, 10)
+            .background(Color.sltDarkCard)
             .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
     }
 }
 
-struct ServiceIcon: View {
+struct SLTServiceIcon: View {
+    var initial: String
     var name: String
     
     var body: some View {
-        VStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white.opacity(0.1))
-                .frame(width: 40, height: 40)
-                .overlay(
-                    Text(String(name.prefix(1))) // Initial letter as mock icon
-                        .font(.headline)
-                )
+        VStack(spacing: 5) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.sltLightBlue)
+                    .frame(width: 42, height: 42)
+                Text(initial)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+            }
             Text(name)
-                .font(.caption2)
+                .font(.system(size: 9))
+                .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
-                .frame(width: 50)
+                .frame(width: 44)
         }
     }
 }
